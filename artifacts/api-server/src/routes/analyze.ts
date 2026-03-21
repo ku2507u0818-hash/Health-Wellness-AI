@@ -140,7 +140,7 @@ function parseAnalysis(analysis: string): { sections: Record<string, string>; ar
   return { sections, arogyaScore };
 }
 
-router.post("/", requireAuth, async (req: AuthRequest, res: Response): Promise<void> => {
+router.post("/analyze", requireAuth, async (req: AuthRequest, res: Response): Promise<void> => {
   const userId = req.userId!;
 
   const allowed = await checkRateLimit(userId);

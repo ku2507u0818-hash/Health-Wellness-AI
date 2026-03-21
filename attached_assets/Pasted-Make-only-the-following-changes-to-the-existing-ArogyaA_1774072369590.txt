@@ -1,0 +1,425 @@
+Make only the following changes to the existing ArogyaAI project.
+Do NOT touch server files, database, API routes, or CSS design system.
+Only change the files listed below.
+
+══════════════════════════════════════════════
+WHAT TO BUILD
+══════════════════════════════════════════════
+
+Add a Language Selection Screen that appears BEFORE the user
+reaches Login or Signup. When someone clicks "Get Started" or
+"Login" from the Landing page, they first see a beautiful
+language picker screen. After choosing their language, THEN
+they go to Login or Signup — and those pages are fully
+displayed in the chosen language.
+
+Also make Login and Signup pages themselves show a language
+switcher at the top so users can change language anytime.
+
+══════════════════════════════════════════════
+CHANGE 1 — client/src/pages/LanguagePicker.jsx  (NEW FILE)
+══════════════════════════════════════════════
+
+Create this new file from scratch:
+
+import { useContext } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { AppContext } from '../App.jsx'
+
+const languages = [
+  {
+    code: 'en',
+    name: 'English',
+    native: 'English',
+    greeting: 'Welcome to ArogyaAI',
+    sub: 'Your AI Health & Wellness Companion',
+    flag: '🇬🇧',
+    script: 'Latin'
+  },
+  {
+    code: 'hi',
+    name: 'Hindi',
+    native: 'हिंदी',
+    greeting: 'ArogyaAI में आपका स्वागत है',
+    sub: 'आपका AI स्वास्थ्य सहायक',
+    flag: '🇮🇳',
+    script: 'Devanagari'
+  },
+  {
+    code: 'gu',
+    name: 'Gujarati',
+    native: 'ગુજરાતી',
+    greeting: 'ArogyaAI માં આપનું સ્વાગત છે',
+    sub: 'તમારો AI સ્વાસ્થ્ય સહાયક',
+    flag: '🇮🇳',
+    script: 'Gujarati'
+  }
+]
+
+const continueLabel = {
+  en: 'Continue',
+  hi: 'आगे बढ़ें',
+  gu: 'આગળ વધો'
+}
+
+const chooseLabel = {
+  en: 'Choose your language',
+  hi: 'अपनी भाषा चुनें',
+  gu: 'તમારી ભાષા પસંદ કરો'
+}
+
+export default function LanguagePicker() {
+  const { lang, switchLang } = useContext(AppContext)
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const destination = searchParams.get('next') || '/signup'
+
+  function handleSelect(code) {
+    switchLang(code)
+  }
+
+  function handleContinue() {
+    navigate(destination)
+  }
+
+  const selected = languages.find(l => l.code === lang) || languages[0]
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: 'var(--bg)',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '24px',
+      fontFamily: 'var(--font-body)'
+    }}>
+
+      {/* Logo */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: '10px',
+        marginBottom: '12px'
+      }}>
+        <div style={{
+          width: 44, height: 44, borderRadius: '12px',
+          background: 'var(--saffron)',
+          display: 'flex', alignItems: 'center',
+          justifyContent: 'center', fontSize: '22px'
+        }}>🌿</div>
+        <span style={{
+          fontFamily: 'var(--font-heading)', fontSize: '24px',
+          fontWeight: 700, color: 'var(--text-primary)'
+        }}>ArogyaAI</span>
+      </div>
+
+      {/* Heading */}
+      <h1 style={{
+        fontFamily: 'var(--font-heading)', fontSize: '20px',
+        fontWeight: 600, color: 'var(--text-primary)',
+        marginBottom: '6px', textAlign: 'center'
+      }}>
+        {chooseLabel[lang]}
+      </h1>
+      <p style={{
+        fontSize: '14px', color: 'var(--text-secondary)',
+        marginBottom: '32px', textAlign: 'center'
+      }}>
+        Select the language you are most comfortable with
+      </p>
+
+      {/* Language Cards */}
+      <div style={{
+        display: 'flex', flexDirection: 'column',
+        gap: '12px', width: '100%', maxWidth: '400px',
+        marginBottom: '28px'
+      }}>
+        {languages.map(l => (
+          <button
+            key={l.code}
+            onClick={() => handleSelect(l.code)}
+            aria-label={`Select ${l.name}`}
+            style={{
+              display: 'flex', alignItems: 'center',
+              gap: '16px', padding: '16px 20px',
+              border: lang === l.code
+                ? '2px solid var(--saffron)'
+                : '2px solid var(--border)',
+              borderRadius: '14px',
+              background: lang === l.code
+                ? 'rgba(255,107,53,0.06)'
+                : 'var(--card-bg)',
+              cursor: 'pointer',
+              transition: 'all 0.18s ease',
+              textAlign: 'left',
+              width: '100%',
+              boxShadow: lang === l.code
+                ? '0 0 0 3px rgba(255,107,53,0.15)'
+                : 'var(--card-shadow)'
+            }}
+          >
+            {/* Flag circle */}
+            <div style={{
+              width: 48, height: 48, borderRadius: '50%',
+              background: 'var(--bg)',
+              display: 'flex', alignItems: 'center',
+              justifyContent: 'center', fontSize: '26px',
+              flexShrink: 0, border: '1px solid var(--border)'
+            }}>
+              {l.flag}
+            </div>
+
+            {/* Text */}
+            <div style={{ flex: 1 }}>
+              <div style={{
+                fontFamily: 'var(--font-heading)', fontSize: '16px',
+                fontWeight: 600, color: 'var(--text-primary)',
+                marginBottom: '2px'
+              }}>
+                {l.native}
+                <span style={{
+                  fontSize: '12px', fontWeight: 400,
+                  color: 'var(--text-muted)', marginLeft: '8px'
+                }}>
+                  {l.name}
+                </span>
+              </div>
+              <div style={{
+                fontSize: '13px', color: 'var(--text-secondary)',
+                fontFamily: l.code === 'en' ? 'var(--font-body)' : 'Noto Sans Devanagari, var(--font-body)'
+              }}>
+                {l.greeting}
+              </div>
+            </div>
+
+            {/* Selected check */}
+            {lang === l.code && (
+              <div style={{
+                width: 24, height: 24, borderRadius: '50%',
+                background: 'var(--saffron)',
+                display: 'flex', alignItems: 'center',
+                justifyContent: 'center', flexShrink: 0,
+                fontSize: '13px', color: 'white', fontWeight: 700
+              }}>✓</div>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Selected language preview */}
+      <div style={{
+        padding: '14px 20px', borderRadius: '12px',
+        background: 'var(--card-bg)', border: '1px solid var(--border)',
+        textAlign: 'center', marginBottom: '24px',
+        maxWidth: '400px', width: '100%'
+      }}>
+        <div style={{
+          fontSize: '15px', fontWeight: 600,
+          color: 'var(--text-primary)', marginBottom: '3px',
+          fontFamily: 'Noto Sans Devanagari, var(--font-body)'
+        }}>
+          {selected.greeting}
+        </div>
+        <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+          {selected.sub}
+        </div>
+      </div>
+
+      {/* Continue button */}
+      <button
+        onClick={handleContinue}
+        style={{
+          width: '100%', maxWidth: '400px',
+          padding: '14px', borderRadius: '12px',
+          background: 'var(--saffron)', color: 'white',
+          fontFamily: 'var(--font-heading)', fontSize: '16px',
+          fontWeight: 600, border: 'none', cursor: 'pointer',
+          transition: 'background 0.2s', minHeight: '50px',
+          letterSpacing: '0.01em'
+        }}
+        onMouseOver={e => e.target.style.background = 'var(--saffron-dark)'}
+        onMouseOut={e => e.target.style.background = 'var(--saffron)'}
+        aria-label={continueLabel[lang]}
+      >
+        {continueLabel[lang]} →
+      </button>
+
+      {/* Skip */}
+      <button
+        onClick={() => navigate(destination)}
+        style={{
+          marginTop: '14px', background: 'none',
+          border: 'none', color: 'var(--text-muted)',
+          fontSize: '13px', cursor: 'pointer', textDecoration: 'underline'
+        }}
+      >
+        Skip and continue in English
+      </button>
+    </div>
+  )
+}
+
+══════════════════════════════════════════════
+CHANGE 2 — client/src/App.jsx
+══════════════════════════════════════════════
+
+Add the import for LanguagePicker at the top with other imports:
+
+    import LanguagePicker from './pages/LanguagePicker.jsx'
+
+Then inside the <Routes> block, add this new route BEFORE the
+login and signup routes:
+
+    <Route path="/language" element={<LanguagePicker />} />
+
+The Routes block should now look like this:
+
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/language" element={<LanguagePicker />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/tips" element={<TipsLibrary />} />
+      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path="/health-check" element={<ProtectedRoute><HealthCheck /></ProtectedRoute>} />
+      <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+
+══════════════════════════════════════════════
+CHANGE 3 — client/src/pages/Landing.jsx
+══════════════════════════════════════════════
+
+Find the Hero section buttons. Change them so they navigate
+to /language?next=... instead of directly to /signup or /login.
+
+Replace the "Get Started" button's onClick or href:
+    OLD: navigate('/signup')  OR  href="/signup"
+    NEW: navigate('/language?next=/signup')
+
+Replace the "Login" button's onClick or href:
+    OLD: navigate('/login')  OR  href="/login"
+    NEW: navigate('/language?next=/login')
+
+If the Navbar also has Login and Get Started buttons that
+navigate directly, update those too:
+    Login button:      navigate('/language?next=/login')
+    Get Started button: navigate('/language?next=/signup')
+
+══════════════════════════════════════════════
+CHANGE 4 — client/src/components/Navbar.jsx
+══════════════════════════════════════════════
+
+Find the Login and Get Started / Sign Up nav buttons.
+Update their navigation targets:
+
+    Login button:       to="/language?next=/login"
+    Get Started button: to="/language?next=/signup"
+
+Use the Link component from react-router-dom or navigate()
+— whichever is already being used in Navbar.jsx.
+
+══════════════════════════════════════════════
+CHANGE 5 — client/src/pages/Login.jsx
+══════════════════════════════════════════════
+
+Add a language switcher strip at the very TOP of the Login
+page (above the form card), INSIDE the return statement.
+
+Add this import at the top of Login.jsx:
+    import { useContext } from 'react'
+    import { AppContext } from '../App.jsx'
+
+Add this inside the component, before the return:
+    const { lang, switchLang } = useContext(AppContext)
+
+Add this JSX at the very top of the returned JSX (before
+any existing content):
+
+    {/* Language strip */}
+    <div style={{
+      display: 'flex', justifyContent: 'center',
+      gap: '8px', padding: '16px 0 0',
+      background: 'var(--bg)'
+    }}>
+      {[
+        { code: 'en', label: 'EN', native: 'English' },
+        { code: 'hi', label: 'हिं', native: 'हिंदी' },
+        { code: 'gu', label: 'ગુ',  native: 'ગુજરાતી' }
+      ].map(l => (
+        <button
+          key={l.code}
+          onClick={() => switchLang(l.code)}
+          title={l.native}
+          aria-label={`Switch to ${l.native}`}
+          style={{
+            padding: '6px 16px',
+            borderRadius: '999px',
+            border: lang === l.code
+              ? '2px solid var(--saffron)'
+              : '2px solid var(--border)',
+            background: lang === l.code
+              ? 'rgba(255,107,53,0.08)'
+              : 'var(--card-bg)',
+            color: lang === l.code
+              ? 'var(--saffron)'
+              : 'var(--text-secondary)',
+            fontFamily: 'var(--font-heading)',
+            fontWeight: 600, fontSize: '13px',
+            cursor: 'pointer', transition: 'all 0.15s'
+          }}
+        >
+          {l.label}
+        </button>
+      ))}
+    </div>
+
+Also update all text labels in Login.jsx to use the t(lang, key)
+function from i18n.js. Add this import:
+    import { t } from '../i18n.js'
+
+Replace hardcoded English strings:
+    "Welcome Back"     → {t(lang, 'login_title')}
+    "Email"            → {t(lang, 'email')}
+    "Password"         → {t(lang, 'password')}
+    "Login" (button)   → {t(lang, 'nav_login')}
+    Any error messages → use t(lang, 'err_required') etc.
+
+══════════════════════════════════════════════
+CHANGE 6 — client/src/pages/Signup.jsx
+══════════════════════════════════════════════
+
+Do the EXACT same thing as Change 5 above but for Signup.jsx.
+
+Add the same language switcher strip at the top.
+Add the same useContext and switchLang logic.
+
+Replace hardcoded strings using t(lang, key):
+    "Create Account"       → {t(lang, 'signup_title')}
+    "Full Name"            → {t(lang, 'name')}
+    "Email"                → {t(lang, 'email')}
+    "Password"             → {t(lang, 'password')}
+    "Age"                  → {t(lang, 'age')}
+    "Gender"               → {t(lang, 'gender')}
+    "Preferred Language"   → {t(lang, 'lang_pref')}
+    "Get Started" (button) → {t(lang, 'nav_signup')}
+
+══════════════════════════════════════════════
+VERIFY AFTER ALL CHANGES
+══════════════════════════════════════════════
+
+Test this exact flow:
+1. Open landing page → click "Get Started"
+2. LanguagePicker page appears ✅
+3. Click "हिंदी" card → it highlights with saffron border ✅
+4. Preview box shows "ArogyaAI में आपका स्वागत है" ✅
+5. Click "आगे बढ़ें" button
+6. Signup page opens — all labels are in Hindi ✅
+7. Language strip at top of Signup shows EN | हिं | ગુ ✅
+8. Clicking EN switches all labels back to English ✅
+9. Go back → click Login → same language picker appears ✅
+10. After login, dashboard shows in the selected language ✅
+
+Do not modify: server files, database, API routes,
+global.css variables, or any other pages.

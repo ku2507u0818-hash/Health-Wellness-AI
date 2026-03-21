@@ -18,6 +18,7 @@ import Reports from "./pages/Reports";
 import ReportDetail from "./pages/ReportDetail";
 import TipsLibrary from "./pages/TipsLibrary";
 import Profile from "./pages/Profile";
+import LanguagePicker from "./pages/LanguagePicker";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ function Router() {
       <Switch>
         {/* Public Routes */}
         <Route path="/" component={Landing} />
+        <Route path="/language" component={LanguagePicker} />
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />
 

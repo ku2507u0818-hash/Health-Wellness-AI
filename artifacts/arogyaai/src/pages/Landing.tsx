@@ -15,10 +15,10 @@ export default function Landing() {
           <span className="font-display font-bold text-2xl text-foreground tracking-tight">ArogyaAI</span>
         </div>
         <div className="flex items-center gap-4">
-          <Link href="/login">
+          <Link href="/language?next=/login">
             <span className="text-foreground font-medium hover:text-primary transition-colors cursor-pointer">Login</span>
           </Link>
-          <Link href="/signup">
+          <Link href="/language?next=/signup">
             <button className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 shadow-lg shadow-primary/25 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
               Get Started
             </button>
@@ -56,7 +56,7 @@ export default function Landing() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-              <Link href="/signup">
+              <Link href="/language?next=/signup">
                 <button className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 rounded-xl bg-primary text-primary-foreground font-bold text-lg shadow-xl shadow-primary/30 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
                   Start Your Journey
                   <ArrowRight className="w-5 h-5" />

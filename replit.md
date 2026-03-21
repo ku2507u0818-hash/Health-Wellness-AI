@@ -15,7 +15,7 @@ A full-stack AI-powered Health & Wellness platform built with React + Vite (fron
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
-- **AI**: Anthropic Claude via Replit AI Integrations
+- **AI**: Google Gemini 2.5 Flash via Replit AI Integrations
 - **Auth**: JWT + bcryptjs
 
 ## Structure
@@ -63,7 +63,7 @@ artifacts-monorepo/
 - `POST /auth/signup` — Register
 - `POST /auth/login` — Login
 - `GET /auth/me` — Current user (auth required)
-- `POST /health/analyze` — AI health analysis (auth required, rate limited)
+- `POST /health/analyze` — AI health analysis via Gemini 2.5 Flash (auth required, rate limited)
 - `GET /reports` — List user reports (auth required)
 - `GET /reports/:id` — Single report (auth required)
 - `GET /tips` — Wellness tips (public)

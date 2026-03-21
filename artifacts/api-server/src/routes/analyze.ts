@@ -3,7 +3,7 @@ import { requireAuth, type AuthRequest } from "../middleware/auth.js";
 import { db, usersTable, healthReportsTable, rateLimitsTable } from "@workspace/db";
 import { eq, and, gt, sql } from "drizzle-orm";
 import { AnalyzeHealthBody } from "@workspace/api-zod";
-import { anthropic } from "@workspace/integrations-anthropic-ai";
+import { ai } from "@workspace/integrations-gemini-ai";
 
 const router: IRouter = Router();
 
@@ -162,14 +162,13 @@ router.post("/", requireAuth, async (req: AuthRequest, res: Response): Promise<v
 
   const prompt = buildPrompt(symptoms, lifestyle, severity, age, language);
 
-  const message = await anthropic.messages.create({
-    model: "claude-sonnet-4-6",
-    max_tokens: 8192,
-    messages: [{ role: "user", content: prompt }],
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: [{ role: "user", parts: [{ text: prompt }] }],
+    config: { maxOutputTokens: 8192, temperature: 0.7 },
   });
 
-  const block = message.content[0];
-  const analysis = block.type === "text" ? block.text : "";
+  const analysis = response.text ?? "";
   const { sections, arogyaScore } = parseAnalysis(analysis);
 
   await incrementRateLimit(userId);

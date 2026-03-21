@@ -1,0 +1,152 @@
+Make the following changes to the existing ArogyaAI project. 
+Do NOT touch any other files. Only change what is listed below.
+
+══════════════════════════════════════════════
+CHANGE 1 — server/package.json
+══════════════════════════════════════════════
+
+Add "node-fetch": "^2.7.0" to the dependencies object.
+Remove any reference to anthropic or @anthropic-ai packages if present.
+
+Final dependencies should include:
+    "node-fetch": "^2.7.0"
+
+Then run: npm install --prefix server
+
+══════════════════════════════════════════════
+CHANGE 2 — server/.env
+══════════════════════════════════════════════
+
+Remove this line if it exists:
+    ANTHROPIC_API_KEY=anything
+
+Add this line:
+    GEMINI_API_KEY=your_gemini_key_here
+
+To get a free Gemini API key:
+  1. Go to https://aistudio.google.com/apikey
+  2. Sign in with Google
+  3. Click "Create API Key"
+  4. Paste it as the value above
+
+══════════════════════════════════════════════
+CHANGE 3 — vercel.json
+══════════════════════════════════════════════
+
+In the "env" block, replace:
+    "ANTHROPIC_API_KEY": "@anthropic_api_key"
+
+With:
+    "GEMINI_API_KEY": "@gemini_api_key"
+
+══════════════════════════════════════════════
+CHANGE 4 — server/routes/health.js  ← MAIN CHANGE
+══════════════════════════════════════════════
+
+At the top of the file, replace:
+    const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+
+With:
+    const fetch = require('node-fetch');
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+    const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+──────────────────────────────────────────────
+Inside the POST /analyze route handler,
+replace the entire Anthropic API fetch block:
+
+OLD CODE (remove this entire block):
+───────────────────────────────────
+    if (!ANTHROPIC_API_KEY) return res.status(500).json({ error: 'AI service not configured.' });
+
+    const apiResponse = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1200,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userMessage }]
+      })
+    });
+
+    if (!apiResponse.ok) {
+      const errText = await apiResponse.text();
+      console.error('Anthropic API error:', errText);
+      return res.status(502).json({ error: 'AI service temporarily unavailable.' });
+    }
+
+    const aiData = await apiResponse.json();
+    const aiResponse = aiData.content?.[0]?.text || 'Unable to generate response.';
+───────────────────────────────────
+
+NEW CODE (replace with this):
+───────────────────────────────────
+    if (!GEMINI_API_KEY) return res.status(500).json({ 
+      error: 'AI service not configured. Add GEMINI_API_KEY to environment.' 
+    });
+
+    const geminiBody = {
+      system_instruction: {
+        parts: [{ text: systemPrompt }]
+      },
+      contents: [
+        {
+          role: 'user',
+          parts: [{ text: userMessage }]
+        }
+      ],
+      generationConfig: {
+        maxOutputTokens: 1200,
+        temperature: 0.7
+      }
+    };
+
+    const apiResponse = await fetch(GEMINI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(geminiBody)
+    });
+
+    if (!apiResponse.ok) {
+      const errText = await apiResponse.text();
+      console.error('Gemini API error:', errText);
+      return res.status(502).json({ error: 'AI service temporarily unavailable. Please try again.' });
+    }
+
+    const aiData = await apiResponse.json();
+    const aiResponse = aiData.candidates?.[0]?.content?.parts?.[0]?.text 
+      || 'Unable to generate response.';
+───────────────────────────────────
+
+Keep the systemPrompt and userMessage variables exactly as they are.
+Keep all the DB saving logic, ArogyaScore calculation, and streak
+update code exactly as they are. Only the fetch block changes.
+
+══════════════════════════════════════════════
+CHANGE 5 — README.md
+══════════════════════════════════════════════
+
+Replace every mention of:
+    "Anthropic Claude API" → "Google Gemini 2.5 Flash API (Free)"
+    "ANTHROPIC_API_KEY"   → "GEMINI_API_KEY"
+    "claude-sonnet-..."   → "gemini-2.5-flash"
+    "https://anthropic.com" → "https://aistudio.google.com"
+
+══════════════════════════════════════════════
+VERIFY AFTER CHANGES
+══════════════════════════════════════════════
+
+1. Run: npm install --prefix server
+2. Make sure server/.env has GEMINI_API_KEY set
+3. Restart the server: npm run dev
+4. Test: submit the health check form
+5. You should see a real AI wellness response within 5-10 seconds
+6. Check server console — it should NOT show any Anthropic errors
+
+That is ALL. Do not change any frontend files, CSS, auth routes,
+database schema, or any other server routes.

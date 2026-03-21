@@ -1,0 +1,14 @@
+packages:
+  "framer-motion": "For smooth page transitions and beautiful entry animations"
+  "clsx": "Utility for Tailwind class merging"
+  "tailwind-merge": "Utility for Tailwind class merging"
+  "lucide-react": "For beautiful consistent icons"
+
+images:
+  - path: "artifacts/arogyaai/public/images/hero-health.png"
+    description: "A calm, modern, abstract medical and wellness background with soft teal and green gradients, clean lines, floating organic shapes, 3d render style, high quality"
+    aspect_ratio: "16:9"
+
+notes:
+  - using window.fetch patch to automatically inject the Bearer token from localStorage for generated API client hooks
+  - implementing all UI pages with full responsive support and dark mode

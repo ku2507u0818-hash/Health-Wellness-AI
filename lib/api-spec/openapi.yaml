@@ -1,15 +1,24 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: ArogyaAI Health & Wellness API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: healthcheck
+    description: AI Health Analysis
+  - name: reports
+    description: Health Reports
+  - name: tips
+    description: Wellness Tips
+  - name: profile
+    description: User Profile
 paths:
   /healthz:
     get:
@@ -24,7 +33,251 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/signup:
+    post:
+      operationId: signup
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignupRequest"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "409":
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current user info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /health/analyze:
+    post:
+      operationId: analyzeHealth
+      tags: [healthcheck]
+      summary: AI Health Analysis
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HealthAnalysisRequest"
+      responses:
+        "200":
+          description: AI health analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthAnalysisResponse"
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /reports:
+    get:
+      operationId: getReports
+      tags: [reports]
+      summary: Get user health reports
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of health reports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HealthReport"
+
+    post:
+      operationId: createReport
+      tags: [reports]
+      summary: Create a health report
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReportRequest"
+      responses:
+        "201":
+          description: Report created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthReport"
+
+  /reports/{id}:
+    get:
+      operationId: getReport
+      tags: [reports]
+      summary: Get a specific health report
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Health report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthReport"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /tips:
+    get:
+      operationId: getTips
+      tags: [tips]
+      summary: Get wellness tips
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: language
+          in: query
+          schema:
+            type: string
+            enum: [en, hi, gu]
+      responses:
+        "200":
+          description: List of wellness tips
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WellnessTip"
+
+  /profile:
+    get:
+      operationId: getProfile
+      tags: [profile]
+      summary: Get user profile
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+    put:
+      operationId: updateProfile
+      tags: [profile]
+      summary: Update user profile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileRequest"
+      responses:
+        "200":
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [profile]
+      summary: Get dashboard data
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardData"
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     HealthStatus:
       type: object
@@ -34,3 +287,287 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+        - error
+
+    SignupRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+        name:
+          type: string
+      required:
+        - email
+        - password
+        - name
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+      required:
+        - token
+        - user
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - email
+        - name
+        - createdAt
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        age:
+          type: integer
+          nullable: true
+        gender:
+          type: string
+          nullable: true
+        language:
+          type: string
+          enum: [en, hi, gu]
+        healthStreak:
+          type: integer
+        arogyaScore:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - email
+        - name
+        - language
+        - healthStreak
+        - arogyaScore
+        - createdAt
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+          nullable: true
+        gender:
+          type: string
+          nullable: true
+        language:
+          type: string
+          enum: [en, hi, gu]
+
+    HealthAnalysisRequest:
+      type: object
+      properties:
+        symptoms:
+          type: string
+        lifestyle:
+          type: string
+        severity:
+          type: string
+          enum: [mild, moderate, severe]
+        age:
+          type: integer
+          nullable: true
+        language:
+          type: string
+          enum: [en, hi, gu]
+      required:
+        - symptoms
+        - severity
+
+    HealthAnalysisResponse:
+      type: object
+      properties:
+        analysis:
+          type: string
+        sections:
+          type: object
+          properties:
+            symptomAnalysis:
+              type: string
+            wellnessSuggestions:
+              type: string
+            dietLifestyle:
+              type: string
+            sleepStress:
+              type: string
+            warningSigns:
+              type: string
+            medicalDisclaimer:
+              type: string
+          required:
+            - symptomAnalysis
+            - wellnessSuggestions
+            - dietLifestyle
+            - sleepStress
+            - warningSigns
+            - medicalDisclaimer
+        arogyaScore:
+          type: integer
+        reportId:
+          type: integer
+      required:
+        - analysis
+        - sections
+        - arogyaScore
+        - reportId
+
+    HealthReport:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        symptoms:
+          type: string
+        lifestyle:
+          type: string
+          nullable: true
+        severity:
+          type: string
+        analysis:
+          type: string
+        arogyaScore:
+          type: integer
+        language:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - userId
+        - symptoms
+        - severity
+        - analysis
+        - arogyaScore
+        - language
+        - createdAt
+
+    CreateReportRequest:
+      type: object
+      properties:
+        symptoms:
+          type: string
+        lifestyle:
+          type: string
+          nullable: true
+        severity:
+          type: string
+        analysis:
+          type: string
+        arogyaScore:
+          type: integer
+        language:
+          type: string
+      required:
+        - symptoms
+        - severity
+        - analysis
+        - arogyaScore
+        - language
+
+    WellnessTip:
+      type: object
+      properties:
+        id:
+          type: integer
+        category:
+          type: string
+        titleEn:
+          type: string
+        titleHi:
+          type: string
+        titleGu:
+          type: string
+        contentEn:
+          type: string
+        contentHi:
+          type: string
+        contentGu:
+          type: string
+        icon:
+          type: string
+      required:
+        - id
+        - category
+        - titleEn
+        - titleHi
+        - titleGu
+        - contentEn
+        - contentHi
+        - contentGu
+        - icon
+
+    DashboardData:
+      type: object
+      properties:
+        arogyaScore:
+          type: integer
+        healthStreak:
+          type: integer
+        totalReports:
+          type: integer
+        recentReports:
+          type: array
+          items:
+            $ref: "#/components/schemas/HealthReport"
+        recentTips:
+          type: array
+          items:
+            $ref: "#/components/schemas/WellnessTip"
+      required:
+        - arogyaScore
+        - healthStreak
+        - totalReports
+        - recentReports
+        - recentTips

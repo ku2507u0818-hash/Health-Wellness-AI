@@ -1,8 +1,8 @@
-# Workspace
+# ArogyaAI - Health & Wellness Platform
 
 ## Overview
 
-pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
+A full-stack AI-powered Health & Wellness platform built with React + Vite (frontend) and Express (backend). Uses Anthropic Claude for AI health analysis, PostgreSQL for data storage, JWT for authentication, and supports 3 languages (English, Hindi, Gujarati).
 
 ## Stack
 
@@ -15,82 +15,66 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
+- **AI**: Anthropic Claude via Replit AI Integrations
+- **Auth**: JWT + bcryptjs
 
 ## Structure
 
 ```text
 artifacts-monorepo/
-├── artifacts/              # Deployable applications
-│   └── api-server/         # Express API server
-├── lib/                    # Shared libraries
+├── artifacts/
+│   ├── api-server/         # Express API server
+│   └── arogyaai/           # React + Vite frontend
+├── lib/
 │   ├── api-spec/           # OpenAPI spec + Orval codegen config
 │   ├── api-client-react/   # Generated React Query hooks
 │   ├── api-zod/            # Generated Zod schemas from OpenAPI
-│   └── db/                 # Drizzle ORM schema + DB connection
-├── scripts/                # Utility scripts (single workspace package)
-│   └── src/                # Individual .ts scripts, run via `pnpm --filter @workspace/scripts run <script>`
-├── pnpm-workspace.yaml     # pnpm workspace (artifacts/*, lib/*, lib/integrations/*, scripts)
-├── tsconfig.base.json      # Shared TS options (composite, bundler resolution, es2022)
-├── tsconfig.json           # Root TS project references
-└── package.json            # Root package with hoisted devDeps
+│   ├── db/                 # Drizzle ORM schema + DB connection
+│   └── integrations-anthropic-ai/  # Anthropic AI integration
+├── scripts/                # Utility scripts
+├── pnpm-workspace.yaml
+├── tsconfig.base.json
+├── tsconfig.json
+└── package.json
 ```
 
-## TypeScript & Composite Projects
+## Features
 
-Every package extends `tsconfig.base.json` which sets `composite: true`. The root `tsconfig.json` lists all packages as project references. This means:
+- Landing, Login, Signup, Dashboard, HealthCheck, Reports, TipsLibrary, Profile pages
+- Multi-language support (EN/HI/GU)
+- Dark mode toggle
+- Font size accessibility
+- ArogyaScore (0-100) circular progress UI
+- Health streak tracking
+- AI analysis with 6 color-coded sections
+- Rate limiting (5 AI requests per hour per user)
+- Print-to-PDF support
+- Toast notifications
 
-- **Always typecheck from the root** — run `pnpm run typecheck` (which runs `tsc --build --emitDeclarationOnly`). This builds the full dependency graph so that cross-package imports resolve correctly. Running `tsc` inside a single package will fail if its dependencies haven't been built yet.
-- **`emitDeclarationOnly`** — we only emit `.d.ts` files during typecheck; actual JS bundling is handled by esbuild/tsx/vite...etc, not `tsc`.
-- **Project references** — when package A depends on package B, A's `tsconfig.json` must list B in its `references` array. `tsc --build` uses this to determine build order and skip up-to-date packages.
+## Database Tables
 
-## Root Scripts
+- `users` - Auth + profile data (id, email, password_hash, name, age, gender, language, health_streak, arogya_score)
+- `health_reports` - AI analysis history (id, user_id, symptoms, lifestyle, severity, analysis, arogya_score, language)
+- `wellness_tips` - Tips library with multilingual content (id, category, title_en/hi/gu, content_en/hi/gu, icon)
+- `rate_limits` - API rate limiting (id, user_id, action, window_start, request_count)
 
-- `pnpm run build` — runs `typecheck` first, then recursively runs `build` in all packages that define it
-- `pnpm run typecheck` — runs `tsc --build --emitDeclarationOnly` using project references
+## API Routes (all prefixed /api)
 
-## Packages
+- `POST /auth/signup` — Register
+- `POST /auth/login` — Login
+- `GET /auth/me` — Current user (auth required)
+- `POST /health/analyze` — AI health analysis (auth required, rate limited)
+- `GET /reports` — List user reports (auth required)
+- `GET /reports/:id` — Single report (auth required)
+- `GET /tips` — Wellness tips (public)
+- `GET /profile` — User profile (auth required)
+- `PUT /profile` — Update profile (auth required)
+- `GET /profile/dashboard` — Dashboard data (auth required)
 
-### `artifacts/api-server` (`@workspace/api-server`)
+## Key Notes
 
-Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` for request and response validation and `@workspace/db` for persistence.
-
-- Entry: `src/index.ts` — reads `PORT`, starts Express
-- App setup: `src/app.ts` — mounts CORS, JSON/urlencoded parsing, routes at `/api`
-- Routes: `src/routes/index.ts` mounts sub-routers; `src/routes/health.ts` exposes `GET /health` (full path: `/api/health`)
-- Depends on: `@workspace/db`, `@workspace/api-zod`
-- `pnpm --filter @workspace/api-server run dev` — run the dev server
-- `pnpm --filter @workspace/api-server run build` — production esbuild bundle (`dist/index.cjs`)
-- Build bundles an allowlist of deps (express, cors, pg, drizzle-orm, zod, etc.) and externalizes the rest
-
-### `lib/db` (`@workspace/db`)
-
-Database layer using Drizzle ORM with PostgreSQL. Exports a Drizzle client instance and schema models.
-
-- `src/index.ts` — creates a `Pool` + Drizzle instance, exports schema
-- `src/schema/index.ts` — barrel re-export of all models
-- `src/schema/<modelname>.ts` — table definitions with `drizzle-zod` insert schemas (no models definitions exist right now)
-- `drizzle.config.ts` — Drizzle Kit config (requires `DATABASE_URL`, automatically provided by Replit)
-- Exports: `.` (pool, db, schema), `./schema` (schema only)
-
-Production migrations are handled by Replit when publishing. In development, we just use `pnpm --filter @workspace/db run push`, and we fallback to `pnpm --filter @workspace/db run push-force`.
-
-### `lib/api-spec` (`@workspace/api-spec`)
-
-Owns the OpenAPI 3.1 spec (`openapi.yaml`) and the Orval config (`orval.config.ts`). Running codegen produces output into two sibling packages:
-
-1. `lib/api-client-react/src/generated/` — React Query hooks + fetch client
-2. `lib/api-zod/src/generated/` — Zod schemas
-
-Run codegen: `pnpm --filter @workspace/api-spec run codegen`
-
-### `lib/api-zod` (`@workspace/api-zod`)
-
-Generated Zod schemas from the OpenAPI spec (e.g. `HealthCheckResponse`). Used by `api-server` for response validation.
-
-### `lib/api-client-react` (`@workspace/api-client-react`)
-
-Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHealthCheck`, `healthCheck`).
-
-### `scripts` (`@workspace/scripts`)
-
-Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.
+- AI Integration uses Replit's managed Anthropic keys (no API key needed from user)
+- JWT secret defaults to `arogya-secret-key-2024` if JWT_SECRET env var not set
+- Rate limit: max 5 AI analyses per user per hour
+- Health streak updates automatically on each AI analysis
+- ArogyaScore is a rolling average (70% old + 30% new)

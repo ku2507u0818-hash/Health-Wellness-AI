@@ -1,0 +1,183 @@
+Build a production-ready full-stack AI Health & Wellness platform called "ArogyaAI".
+
+This MUST be a MONOREPO project structured exactly like this:
+
+/client → Vite + React frontend
+/server → Express.js backend (serverless compatible)
+
+The project MUST run locally AND deploy correctly on Vercel.
+
+════════════════════════════
+CORE REQUIREMENTS
+════════════════════════════
+
+1. Use:
+   - Frontend: Vite + React 18 + React Router
+   - Backend: Node.js + Express
+   - Database: SQLite (better-sqlite3)
+   - Authentication: JWT + bcrypt
+   - AI Integration: Anthropic Claude API
+   - Deployment: Vercel (serverless + static)
+
+2. Folder structure MUST match exactly:
+
+/client
+/server
+vercel.json
+package.json (root)
+
+DO NOT merge client and server.
+
+════════════════════════════
+IMPORTANT RULES (VERY STRICT)
+════════════════════════════
+
+- DO NOT skip any file mentioned
+- DO NOT rename files
+- DO NOT change folder structure
+- DO NOT use TypeScript (only JS)
+- DO NOT use external UI libraries (no Tailwind, no MUI)
+- Use only pure CSS (provided design system)
+
+- Backend MUST run on port 3001 locally
+- Frontend MUST run on port 5173 locally
+
+- All API routes MUST be prefixed with:
+  /api/
+
+════════════════════════════
+VERCEL DEPLOYMENT REQUIREMENTS
+════════════════════════════
+
+- Use vercel.json for routing:
+  /api/* → server
+  /* → client build
+
+- Backend must be serverless-compatible
+- Frontend must build into /client/dist
+
+- Environment variables:
+  ANTHROPIC_API_KEY
+  JWT_SECRET
+  CLIENT_URL
+
+════════════════════════════
+AI FEATURE (VERY IMPORTANT)
+════════════════════════════
+
+Implement AI health analysis using Claude API:
+
+Endpoint:
+POST /api/health/analyze
+
+Requirements:
+- Accept symptoms, lifestyle, severity, etc.
+- Generate structured response with EXACT sections:
+
+🔍 Symptom Analysis  
+💡 Wellness Suggestions  
+🥗 Diet & Lifestyle  
+😴 Sleep & Stress  
+⚠️ Warning Signs  
+🏥 Medical Disclaimer  
+
+- Response must support:
+  English, Hindi, Gujarati
+
+- Implement rate limiting:
+  Max 5 AI requests per user per hour
+
+════════════════════════════
+DATABASE REQUIREMENTS
+════════════════════════════
+
+Use SQLite with 3 tables:
+- users
+- health_reports
+- wellness_tips
+
+Include:
+- Schema creation
+- Seed data (minimum 5 tips)
+
+════════════════════════════
+FRONTEND REQUIREMENTS
+════════════════════════════
+
+Pages (ALL required):
+- Landing
+- Login
+- Signup
+- Dashboard
+- HealthCheck
+- Reports
+- TipsLibrary
+- Profile
+
+Features:
+- Multi-language (EN / HI / GU)
+- Dark mode toggle
+- Font size accessibility toggle
+- JWT auth (protected routes)
+- Responsive design (mobile-first)
+
+════════════════════════════
+SPECIAL UI FEATURES
+════════════════════════════
+
+- ArogyaScore (0–100) with circular progress UI
+- Health streak tracking
+- AI response rendered in colored sections
+- Toast notifications
+- Loading states
+- Print-to-PDF (window.print)
+
+════════════════════════════
+REPLIT COMPATIBILITY FIXES
+════════════════════════════
+
+- Add this to root package.json scripts:
+
+"dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\""
+
+- Ensure:
+  npm install works without errors
+  npm run dev starts both client + server
+
+════════════════════════════
+FINAL OUTPUT REQUIREMENTS
+════════════════════════════
+
+After building:
+
+1. Project must run locally with:
+   npm run dev
+
+2. Must deploy on Vercel WITHOUT changes
+
+3. GitHub-ready (clean commits)
+
+4. No missing dependencies
+
+5. No runtime errors
+
+════════════════════════════
+CRITICAL SUCCESS CHECK
+════════════════════════════
+
+Ensure ALL of these work:
+
+✔ Signup/Login with JWT  
+✔ AI health analysis working  
+✔ Database storing reports  
+✔ Multi-language switching instantly  
+✔ Dashboard showing score + streak  
+✔ Reports page working  
+✔ Tips loading from DB  
+✔ Profile update working  
+✔ Mobile responsive  
+✔ Vercel deployment successful  
+
+════════════════════════════
+
+Build the COMPLETE working codebase now.

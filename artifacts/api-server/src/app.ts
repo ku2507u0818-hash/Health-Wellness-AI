@@ -47,8 +47,8 @@ const corsOptions: cors.CorsOptions = {
   optionsSuccessStatus: 204,
 };
 
-// Handle preflight OPTIONS for every route first
-app.options("*", cors(corsOptions));
+// Handle preflight OPTIONS for every route first (Express 5 requires regex or named wildcard)
+app.options(/(.*)/, cors(corsOptions));
 app.use(cors(corsOptions));
 
 app.use(express.json());

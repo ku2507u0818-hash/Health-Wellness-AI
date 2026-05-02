@@ -4,6 +4,4 @@ buildCommand = "npx --yes pnpm@10 install --no-frozen-lockfile && npx --yes pnpm
 
 [deploy]
 startCommand = "node --enable-source-maps ./artifacts/api-server/dist/index.mjs"
-healthcheckPath = "/api/tips"
-healthcheckTimeout = 30
 restartPolicyType = "on_failure"

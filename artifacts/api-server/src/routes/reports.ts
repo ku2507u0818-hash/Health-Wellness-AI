@@ -33,7 +33,7 @@ router.post("/", requireAuth, async (req: AuthRequest, res: Response): Promise<v
 });
 
 router.get("/:id", requireAuth, async (req: AuthRequest, res: Response): Promise<void> => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(String(req.params.id));
   if (isNaN(id)) {
     res.status(400).json({ error: "Invalid ID" });
     return;

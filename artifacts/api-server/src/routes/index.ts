@@ -5,6 +5,7 @@ import analyzeRouter from "./analyze.js";
 import reportsRouter from "./reports.js";
 import tipsRouter from "./tips.js";
 import profileRouter from "./profile.js";
+import dashboardRouter from "./dashboard.js";
 
 const router = Router();
 
@@ -14,8 +15,6 @@ router.use("/health", analyzeRouter);
 router.use("/reports", reportsRouter);
 router.use("/tips", tipsRouter);
 router.use("/profile", profileRouter);
-router.get("/dashboard", async (req, res) => {
-  res.redirect(307, "/api/profile/dashboard");
-});
+router.use("/dashboard", dashboardRouter);
 
 export default router;

@@ -2,50 +2,38 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
-import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
+const isBuild = process.argv.includes("build");
+
+// PORT is only needed for the dev server, not for `vite build`
 const rawPort = process.env.PORT;
+const port = rawPort ? Number(rawPort) : 5173;
 
-if (!rawPort) {
-  throw new Error(
-    "PORT environment variable is required but was not provided.",
-  );
-}
+// BASE_PATH defaults to "/" for production builds (Vercel, etc.)
+const basePath = process.env.BASE_PATH || "/";
 
-const port = Number(rawPort);
+// Backend URL for proxying in local dev (not needed in Replit — handled by the Replit proxy)
+const apiServerPort = process.env.API_SERVER_PORT || "8080";
 
-if (Number.isNaN(port) || port <= 0) {
-  throw new Error(`Invalid PORT value: "${rawPort}"`);
-}
+const plugins = [react(), tailwindcss()];
 
-const basePath = process.env.BASE_PATH;
-
-if (!basePath) {
-  throw new Error(
-    "BASE_PATH environment variable is required but was not provided.",
+// Only load Replit-specific plugins inside the Replit environment
+if (!isBuild && process.env.REPL_ID !== undefined) {
+  const [{ default: runtimeErrorOverlay }, { cartographer }, { devBanner }] = await Promise.all([
+    import("@replit/vite-plugin-runtime-error-modal"),
+    import("@replit/vite-plugin-cartographer"),
+    import("@replit/vite-plugin-dev-banner"),
+  ]);
+  plugins.push(
+    runtimeErrorOverlay(),
+    cartographer({ root: path.resolve(import.meta.dirname, "..") }),
+    devBanner(),
   );
 }
 
 export default defineConfig({
   base: basePath,
-  plugins: [
-    react(),
-    tailwindcss(),
-    runtimeErrorOverlay(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer({
-              root: path.resolve(import.meta.dirname, ".."),
-            }),
-          ),
-          await import("@replit/vite-plugin-dev-banner").then((m) =>
-            m.devBanner(),
-          ),
-        ]
-      : []),
-  ],
+  plugins,
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "src"),
@@ -66,6 +54,15 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
+    // Proxy /api calls to the backend in local dev (outside Replit)
+    proxy: process.env.REPL_ID
+      ? undefined
+      : {
+          "/api": {
+            target: `http://localhost:${apiServerPort}`,
+            changeOrigin: true,
+          },
+        },
   },
   preview: {
     port,

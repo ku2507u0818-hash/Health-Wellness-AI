@@ -25,7 +25,11 @@ app.use(
     },
   }),
 );
-app.use(cors());
+
+// Allow requests from the Vercel frontend domain (or all origins in dev)
+const corsOrigin = process.env.CORS_ORIGIN || "*";
+app.use(cors({ origin: corsOrigin, credentials: corsOrigin !== "*" }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

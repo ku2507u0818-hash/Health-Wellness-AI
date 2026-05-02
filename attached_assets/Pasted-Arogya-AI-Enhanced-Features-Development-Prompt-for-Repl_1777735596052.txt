@@ -1,0 +1,276 @@
+Arogya AI - Enhanced Features Development Prompt for Replit
+Project Overview
+Build an advanced AI-powered health management application with symptom analysis, personalized recommendations, stress monitoring, and comprehensive reporting capabilities.
+
+Current App Structure (DO NOT MODIFY)
+
+Existing Features: Dashboard, Health Check (Symptoms input, Lifestyle info, Severity, Age), Reports, Tips Library, Profile
+Current Health Check Form: Accepts symptoms, lifestyle details, severity level, and age
+Styling: Teal/turquoise accent color (#2DD4BF), clean UI with sidebar navigation
+
+
+NEW FEATURES TO ADD
+1. AI Diet Recommendation System 🥗
+Purpose: Provide personalized diet recommendations based on analyzed symptoms and health conditions.
+Implementation Details:
+
+Analysis Engine: Parse the symptoms entered in Health Check and identify health patterns
+Recommendation Logic:
+
+For headaches: suggest hydration-focused diet, magnesium-rich foods
+For fatigue: recommend iron-rich foods, B-complex foods, protein sources
+For digestive issues: suggest fiber-rich, easily digestible foods
+For general wellness: balanced macronutrient recommendations
+
+
+Database/Data Structure:
+
+Create a food database with nutritional info (calories, protein, carbs, fats, vitamins, minerals)
+Map symptoms to food categories
+Include cuisine preferences (Indian, Continental, Vegan, etc.)
+
+
+Output Format:
+
+Weekly meal plan (with breakfast, lunch, snacks, dinner)
+Grocery list with estimated quantities
+Nutritional breakdown per day
+Foods to avoid based on symptoms
+Hydration recommendations (water intake based on severity)
+
+
+UI Component: New card in dashboard showing "AI Diet Recommendations" with expandable meal plans
+Integration: Use the symptoms from Health Check analysis for recommendations
+
+
+2. AI Stress Analyzer 🧠
+Purpose: Assess user's stress levels based on lifestyle patterns and provide coping strategies.
+Implementation Details:
+
+Stress Assessment Parameters:
+
+Sleep duration analysis (< 6 hours = high stress, 7-8 = normal, > 9 = possible oversleep)
+Exercise frequency (sedentary = high stress indicator)
+Caffeine intake level (high coffee = potential stress factor)
+Symptom severity score
+Frequency of symptoms
+
+
+Stress Scoring Algorithm:
+
+Calculate stress score (0-100 scale)
+0-30: Low Stress (Green indicator)
+31-60: Moderate Stress (Yellow indicator)
+61-100: High Stress (Red indicator)
+
+
+Recommendations Based on Stress Level:
+
+Meditation techniques (guided, duration-based)
+Breathing exercises (4-7-8 breathing, box breathing)
+Physical activities (yoga, walking, gym routines)
+Mindfulness practices
+Work-life balance tips
+When to seek professional help
+
+
+Daily Stress Tracking: Graph showing stress trends over time
+UI Component:
+
+Stress Meter card showing current score with visual indicator
+Recommended coping strategies carousel
+Stress history chart
+
+
+Data Storage: Store daily stress assessments for trend analysis
+
+
+3. PDF Report Generator 📄
+Purpose: Create professional, downloadable health reports for doctor consultations.
+Implementation Details:
+
+Report Contents:
+
+Patient Information (Name, Age, Date of Report)
+Symptom Analysis
+
+Primary symptoms listed
+Severity assessment
+Duration and frequency
+
+
+Health Assessment Summary
+
+Potential health indicators
+Risk factors identified
+
+
+AI Recommendations Section
+
+Diet recommendations summary
+Stress analysis findings
+Lifestyle suggestions
+
+
+Vital Observations
+
+BMI (if provided)
+Sleep quality assessment
+Exercise frequency
+
+
+Wellness Tips (top 5 personalized tips)
+Report Generation Date and Disclaimer
+
+
+PDF Styling:
+
+Professional header with Arogya AI branding
+Organized sections with clear headings
+Charts/graphs (stress trends, symptom timeline)
+Color-coded severity indicators
+Footer with medical disclaimer
+
+
+Generation Method:
+
+Use jsPDF + html2pdf libraries for React/JavaScript
+Trigger from Health Check or Reports page
+Include timestamp and report ID
+
+
+Download Functionality:
+
+"Download PDF" button with file naming: HealthReport_[Name]_[Date].pdf
+Also provide "Share" option (generate shareable link or email)
+
+
+Report Templates:
+
+Full Comprehensive Report
+Quick Summary (1-page version)
+Doctor Consultation Format (formal structure)
+
+
+
+
+4. Daily Wellness & Medicine Reminder ⏰💊
+Purpose: Help users stay on track with medications, supplements, and wellness activities.
+Implementation Details:
+
+Reminder Types:
+
+Medication reminders (name, dosage, time, frequency)
+Supplement reminders (vitamin, mineral, dosage)
+Water intake reminders (every 2 hours)
+Exercise reminders
+Meditation/Wellness reminders
+Meal reminders
+
+
+Reminder Management:
+
+Add/Edit/Delete reminders
+Set time for each reminder (morning, afternoon, evening, or custom time)
+Choose frequency (daily, weekly, specific days)
+Recurring vs one-time reminders
+Snooze option (5, 15, 30 min)
+
+
+Features:
+
+Push notifications (browser notifications)
+In-app notification bell with count
+Reminder history (completed/missed)
+Adherence tracking (completion rate %)
+Motivation messages for streak maintenance
+
+
+Dashboard Integration:
+
+"Today's Reminders" widget showing pending reminders
+Completion status with checkmarks
+Quick "Mark as Done" functionality
+
+
+Data Structure:
+
+Store reminders with: ID, type, name, time, frequency, dosage, active status
+Track completion history
+
+
+UI Components:
+
+Reminders page with list view and calendar view
+Add Reminder modal with form validation
+Notification popup with action buttons (Complete, Snooze, Dismiss)
+Adherence analytics chart
+
+
+
+
+5. BMI Calculator with Accuracy 📏⚖️
+Purpose: Provide accurate BMI calculation and health category assessment with detailed insights.
+Implementation Details:
+
+BMI Calculation Formula:
+
+BMI = weight(kg) / (height(m))²
+Support both metric (kg, cm) and imperial (lbs, inches) units
+Auto-conversion between units
+
+
+Input Fields:
+
+Height (cm or ft/inches with toggle)
+Weight (kg or lbs with toggle)
+Age (for context)
+Gender (for body composition insights)
+
+
+BMI Categories & Health Status:
+
+Underweight (BMI < 18.5) - Blue
+Normal Weight (BMI 18.5-24.9) - Green
+Overweight (BMI 25-29.9) - Yellow
+Obese Class I (BMI 30-34.9) - Orange
+Obese Class II (BMI 35-39.9) - Red
+Obese Class III (BMI ≥ 40) - Dark Red
+
+
+Additional Metrics Calculated:
+
+Ideal weight range (based on height)
+Weight difference from ideal (kg needed to gain/lose)
+BMI trend (if historical data available)
+Body composition estimate (considering age/gender)
+
+
+Accuracy Features:
+
+Real-time calculation as user inputs data
+Visual feedback with color-coded status
+Comparison with WHO standards
+Age and gender-adjusted interpretation
+
+
+Health Recommendations Based on BMI:
+
+Dietary suggestions
+Exercise recommendations
+Health risks associated with current BMI
+Target weight and healthy habits
+
+
+UI Components:
+
+Interactive BMI Calculator card
+Real-time result display with gauge/meter
+Category badge with color coding
+Health insights panel
+Historical tracking (show previous measurements)
+Printable BMI report
+
+
+Integration with Diet System: Pass BMI data to AI Diet Recommendation for personalized suggestions
+

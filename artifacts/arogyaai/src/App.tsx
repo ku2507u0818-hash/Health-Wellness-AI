@@ -19,6 +19,8 @@ import ReportDetail from "./pages/ReportDetail";
 import TipsLibrary from "./pages/TipsLibrary";
 import Profile from "./pages/Profile";
 import LanguagePicker from "./pages/LanguagePicker";
+import BMICalculator from "./pages/BMICalculator";
+import StressAnalyzer from "./pages/StressAnalyzer";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -65,6 +67,12 @@ function Router() {
         </Route>
         <Route path="/profile">
           {() => <ProtectedRoute component={Profile} />}
+        </Route>
+        <Route path="/bmi">
+          {() => <ProtectedRoute component={BMICalculator} />}
+        </Route>
+        <Route path="/stress">
+          {() => <ProtectedRoute component={StressAnalyzer} />}
         </Route>
 
         <Route component={NotFound} />

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, LayoutDashboard, HeartPulse, FileText, Lightbulb, User, LogOut, Menu, X, Moon, Sun, Type, Globe } from 'lucide-react';
+import { Activity, LayoutDashboard, HeartPulse, FileText, Lightbulb, User, LogOut, Menu, X, Moon, Sun, Type, Globe, Scale, Brain } from 'lucide-react';
 import { useAppState } from '@/hooks/use-app-state';
 import { t, Language } from '@/lib/i18n';
+import { AIChatbox } from './AIChatbox';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -17,6 +18,8 @@ export function Layout({ children }: LayoutProps) {
   const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/health-check', label: 'Health Check', icon: HeartPulse },
+    { href: '/bmi', label: 'BMI Calculator', icon: Scale },
+    { href: '/stress', label: 'Stress Analyzer', icon: Brain },
     { href: '/reports', label: 'Reports', icon: FileText },
     { href: '/tips', label: 'Tips Library', icon: Lightbulb },
     { href: '/profile', label: 'Profile', icon: User },
@@ -128,6 +131,9 @@ export function Layout({ children }: LayoutProps) {
           </AnimatePresence>
         </div>
       </main>
+
+      {/* Global AI Chatbox */}
+      <AIChatbox />
 
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>

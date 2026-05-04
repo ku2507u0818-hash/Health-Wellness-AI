@@ -6,6 +6,7 @@ import reportsRouter from "./reports.js";
 import tipsRouter from "./tips.js";
 import profileRouter from "./profile.js";
 import dashboardRouter from "./dashboard.js";
+import chatRouter from "./chat.js";
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use("/reports", reportsRouter);
 router.use("/tips", tipsRouter);
 router.use("/profile", profileRouter);
 router.use("/dashboard", dashboardRouter);
+router.use("/chat", chatRouter);
 
 export default router;

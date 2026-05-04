@@ -1,0 +1,164 @@
+Enhance my existing ArogyaAI app by ADDING the following 3 features ONLY:
+1) Stress Analyzer
+2) BMI Calculator
+3) Floating AI Chatbox
+
+IMPORTANT RULES:
+- DO NOT change or remove any existing UI, pages, navigation, or styling
+- Keep Dashboard, Health Check, Reports, Tips Library, Profile EXACTLY same
+- Maintain current color theme, fonts, spacing, and layout
+- New features must match existing UI design
+- Fully responsive and smooth animations
+- Modular clean code
+
+--------------------------------------------------
+1. BMI CALCULATOR (Dashboard + Profile Section)
+--------------------------------------------------
+
+Add a new card/widget called “BMI Calculator”
+
+INPUTS:
+- Height (cm)
+- Weight (kg)
+- Age (optional)
+- Gender (optional)
+
+LOGIC:
+BMI = weight (kg) / (height in meters)^2
+
+OUTPUT:
+- BMI Score
+- Category:
+   Underweight (<18.5)
+   Normal (18.5–24.9)
+   Overweight (25–29.9)
+   Obese (30+)
+
+DISPLAY:
+- Circular progress or gauge meter
+- Color-coded result:
+   Green (Normal)
+   Yellow (Moderate)
+   Red (High Risk)
+
+ALSO SHOW:
+- Personalized health tips
+- Ideal weight suggestion
+- Small fitness advice text
+
+UI:
+- Clean card with input fields + calculate button
+- Smooth animation on result
+
+--------------------------------------------------
+2. STRESS ANALYZER (New Section or Card)
+--------------------------------------------------
+
+Add new section/card:
+“Stress Analyzer”
+
+QUESTIONS (multiple choice or sliders):
+- Sleep quality (Good / Average / Poor)
+- Daily stress level (Low / Medium / High)
+- Workload (Light / Moderate / Heavy)
+- Mood (Happy / Neutral / Sad / Irritated)
+- Exercise frequency (Daily / Rarely / Never)
+
+LOGIC:
+Assign scores to each answer and calculate total stress score (0–100)
+
+OUTPUT:
+- Stress Score (0–100)
+- Category:
+   Mild
+   Moderate
+   High
+
+DISPLAY:
+- Progress bar or circular meter
+- Color-coded stress level
+
+ALSO SHOW:
+- Suggestions:
+   Breathing exercises
+   Meditation tips
+   Sleep improvement tips
+   Reduce caffeine advice
+
+IF HIGH STRESS:
+Show warning:
+“Consider taking rest or consulting a professional.”
+
+OPTIONAL:
+- Weekly stress trend chart (basic graph)
+
+--------------------------------------------------
+3. FLOATING AI CHATBOX (GLOBAL FEATURE)
+--------------------------------------------------
+
+Add a floating chat button at bottom-right of screen
+
+ON CLICK:
+Open AI Chat Window
+
+FEATURES:
+- Chat UI similar to modern chatbot
+- User can ask:
+   Symptoms
+   Diet
+   BMI
+   Stress
+   General health questions
+
+FUNCTIONALITY:
+- Context aware (use entered user data if available)
+- Provide short helpful answers
+- Friendly tone
+
+UI:
+- Floating circular button
+- Chat popup with:
+   Header (AI Health Assistant)
+   Message area
+   Input box
+   Send button
+   Typing animation
+
+ADD:
+- Suggested quick prompts:
+   “Check my symptoms”
+   “Diet for fatigue”
+   “How to reduce stress?”
+
+IMPORTANT:
+- Add disclaimer inside chat:
+   “This is not a medical diagnosis”
+
+--------------------------------------------------
+INTEGRATION
+--------------------------------------------------
+
+- BMI and Stress data should be usable later for reports
+- Chatbot can reference BMI & Stress if available
+- Store minimal user inputs locally (state or simple DB)
+
+--------------------------------------------------
+DESIGN REQUIREMENTS
+--------------------------------------------------
+
+- Match existing UI perfectly
+- No redesign
+- Use same card styles, buttons, spacing
+- Smooth transitions
+- Mobile responsive
+
+--------------------------------------------------
+FINAL GOAL
+--------------------------------------------------
+
+Upgrade ArogyaAI with:
+- Physical Health (BMI)
+- Mental Health (Stress)
+- AI Interaction (Chatbot)
+
+WITHOUT changing current app structure.
